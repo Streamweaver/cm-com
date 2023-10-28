@@ -1267,10 +1267,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 582d763f648d8684aae06226629f7da7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 6
-  rotateSpeed: 10
-  stopDistance: 0.1
-  unitAnimator: {fileID: 3992539151683213281}
 --- !u!114 &3483149983479108079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1283,6 +1279,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98e44ca13a5eb7b4b8a9207fd7f11090, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unitAnimator: {fileID: 3992539151683213281}
+  moveSpeed: 4
+  rotateSpeed: 15
+  stopDistance: 0.1
 --- !u!1 &3907102710545929395
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,16 +5,11 @@ using UnityEngine;
 public class Unit : MonoBehaviour
 {
     private GridPosition unitGridPosition;
-    private MoveAction moveAction;  // Caching this object.
-
-    public Animator unitAnimator;
+    private MoveAction moveAction; 
 
     private void Awake()
     {
-        if(unitAnimator == null)
-        {
-            Debug.LogError("Unit Animator not set in inspector!");
-        }
+        moveAction = GetComponent<MoveAction>();
     }
 
     private void Start()
@@ -30,7 +25,7 @@ public class Unit : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-
+        UpdateGridPosition();
     }
 
     public void UpdateGridPosition()
@@ -44,15 +39,13 @@ public class Unit : MonoBehaviour
         }
     }
 
+    public GridPosition GetGridPosition()
+    {
+        return unitGridPosition;
+    }
+
     public MoveAction GetMoveAction()
     {
-        if (!moveAction)
-        {
-            if (!TryGetComponent<MoveAction>(out moveAction)) // This should haved the effect of caching this call.
-            {
-                Debug.LogError("Unable to get Move Action on Unit!");
-            }
-        }
         return moveAction;
     }
 }

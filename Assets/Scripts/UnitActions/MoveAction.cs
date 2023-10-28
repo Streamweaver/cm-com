@@ -6,19 +6,26 @@ public class MoveAction : MonoBehaviour
 {
     private Vector3 targetMovePosition;
     private bool isMoving = false;
+    private int maxMoveDistance = 4;
     private Unit unit;
 
+    public Animator unitAnimator;
     [SerializeField] private float moveSpeed = 4f;
     [SerializeField] private float rotateSpeed = 15f;
     [SerializeField] private float stopDistance = 0.1f;
 
+    private void Awake()
+    {
+        unit = GetComponent<Unit>();
+        if (unitAnimator == null)
+        {
+            Debug.LogError("Unit Animator not set in inspector!");
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        if (!TryGetComponent<Unit>(out unit))
-        {
-            Debug.LogError("Unable to get Unit.");
-        }
     }
 
     // Update is called once per frame
@@ -36,7 +43,6 @@ public class MoveAction : MonoBehaviour
         transform.position += moveDirection * Time.deltaTime * this.moveSpeed;
         transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * rotateSpeed);
         float distancToMoveTarget = Vector3.Distance(transform.position, targetMovePosition);
-        unit.UpdateGridPosition();
         if (distancToMoveTarget <= stopDistance)
         {
             setMoving(false);
@@ -50,6 +56,21 @@ public class MoveAction : MonoBehaviour
     private void setMoving(bool bMove)
     {
         isMoving = bMove;
-        unit.unitAnimator.SetBool("IsWalking", bMove);
+        unitAnimator.SetBool("IsWalking", bMove);
+    }
+
+    public List<GridPosition> GetValidActionGridPositionList()
+    {
+        List<GridPosition > gridPositions = new List<GridPosition>();
+        GridPosition unitGridPosition = unit.GetGridPosition();
+        for (int x = -maxMoveDistance; x <= maxMoveDistance; x++)
+        {
+            for (int z = -maxMoveDistance; z <= maxMoveDistance; z++)
+            {
+                GridPosition offsetGridPosition = new GridPosition(x, z);
+                GridPosition testGridPosition = offsetGridPosition + unitGridPosition;
+            }
+        }
+        return gridPositions;
     }
 }
