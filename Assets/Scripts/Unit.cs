@@ -5,6 +5,7 @@ using UnityEngine;
 public class Unit : MonoBehaviour
 {
     private GridPosition unitGridPosition;
+    private MoveAction moveAction;  // Caching this object.
 
     public Animator unitAnimator;
 
@@ -41,5 +42,17 @@ public class Unit : MonoBehaviour
             unitGridPosition = newGridPosition;
             LevelGrid.Instance.AddUnitToGrid(unitGridPosition, this);
         }
+    }
+
+    public MoveAction GetMoveAction()
+    {
+        if (!moveAction)
+        {
+            if (!TryGetComponent<MoveAction>(out moveAction)) // This should haved the effect of caching this call.
+            {
+                Debug.LogError("Unable to get Move Action on Unit!");
+            }
+        }
+        return moveAction;
     }
 }
