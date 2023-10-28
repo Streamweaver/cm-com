@@ -40,7 +40,13 @@ public class UnitActionSystem : MonoBehaviour
     {
         if (Instance.selectedUnit != null)
         {
-            Instance.selectedUnit.HandleMoveOrder(position);
+            MoveAction unitMover;
+            if(!Instance.selectedUnit.TryGetComponent<MoveAction>(out unitMover))
+            {
+                Debug.LogError("Could not find Move Action on unit.");
+                return;
+            }
+            unitMover.HandleMoveOrder(position);
         }
     }
 
