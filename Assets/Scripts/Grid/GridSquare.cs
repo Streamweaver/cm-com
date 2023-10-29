@@ -20,7 +20,7 @@ public class GridSquare
         string returnString = $"{gridPosition.X}, {gridPosition.Z}";
         foreach (Unit unit in this.unitList)
         {
-            returnString += $"\n{unit.ToString()}";
+            returnString += $"\n{unit}";
         }
         return returnString;
     }
@@ -37,5 +37,10 @@ public class GridSquare
 
     public List<Unit> GetUnitList() { 
         return unitList;
+    }
+
+    public bool HasAnyUnit()
+    {
+        return unitList.Count > 0;
     }
 }

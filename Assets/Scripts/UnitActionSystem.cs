@@ -27,20 +27,23 @@ public class UnitActionSystem : MonoBehaviour
 
     }
 
-    public void HandleUnitSelection(Collider unitCollider)
+    public void HandleUnitSelection(Unit unit)
     {
-        if (Instance.selectedUnit == null || unitCollider.gameObject != Instance.selectedUnit.gameObject)
+        if (Instance.selectedUnit == null || unit.gameObject != Instance.selectedUnit.gameObject)
         {
-            Instance.selectedUnit = unitCollider.GetComponent<Unit>();
+            Instance.selectedUnit = unit.GetComponent<Unit>();
             Instance.OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);
+            GridSystemVisual.Instance.HideAllGridPositions();
+            List<GridPosition> validGridPositions = unit.GetMoveAction().GetValidActionGridPositionList();
+            GridSystemVisual.Instance.ShowGridPositions(validGridPositions);
         }
     }
 
-    public void HandleUnitMoveOrder(Vector3 position)
+    public void HandleUnitMoveOrder(GridPosition gridPosition)
     {
         if (Instance.selectedUnit != null)
         {
-            Instance.selectedUnit.GetMoveAction().HandleMoveOrder(position);
+            Instance.selectedUnit.GetMoveAction().HandleMoveOrder(gridPosition);
         }
     }
 

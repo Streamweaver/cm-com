@@ -39,12 +39,17 @@ public class InputController : MonoBehaviour
 
     private void HandleUnitClick(Collider unitCollider)
     {
-        unitActionSystem.HandleUnitSelection(unitCollider);
+        if(unitCollider != null && unitCollider.TryGetComponent<Unit>(out Unit unit))
+        {
+            unitActionSystem.HandleUnitSelection(unit);
+        }
+
     }
 
     private void HandleEnvironmentalClick(Vector3 point)
     {
-        unitActionSystem.HandleUnitMoveOrder(point);
+        GridPosition gridPosition = LevelGrid.Instance.WorldPositionToGridPosition(point);
+        unitActionSystem.HandleUnitMoveOrder(gridPosition);
     }
 }
 

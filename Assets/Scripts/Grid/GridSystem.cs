@@ -59,4 +59,22 @@ public class GridSystem
             }
         }
     }
+
+    public bool IsValidGridPosition(GridPosition gridPosition)
+    {
+        return gridPosition.X >= 0 &&
+               gridPosition.Z >= 0 &&
+               gridPosition.X < width &&
+               gridPosition.Z < height;
+    }
+
+    public int GetWidth()
+    {
+        return width;
+    }
+
+    public int GetHeight()
+    {
+        return height;
+    }
 }

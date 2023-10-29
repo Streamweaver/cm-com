@@ -7,6 +7,9 @@ public class LevelGrid : MonoBehaviour
     public static LevelGrid Instance { get; private set; }
 
     [SerializeField] private Transform gridDebugObjectPrefab;
+    [SerializeField] private int gridWidth = 10;
+    [SerializeField] private int gridHeight = 10;
+    [SerializeField] private float gridCellSize = 2f;
 
     private GridSystem gridSystem;
 
@@ -25,13 +28,13 @@ public class LevelGrid : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        Instance.gridSystem = new GridSystem(10, 10, 2f);
+        Instance.gridSystem = new GridSystem(gridWidth, gridHeight, gridCellSize);
         Instance.gridSystem.CreateDebugObjects(gridDebugObjectPrefab);
     }
 
     public void AddUnitToGrid(GridPosition gridPosition, Unit unit)
     {
-        GridSquare gridSquare = gridSystem.GetGridSquare(gridPosition);
+        GridSquare gridSquare = Instance.gridSystem.GetGridSquare(gridPosition);
         gridSquare.AddUnit(unit);
     }
 
@@ -43,10 +46,28 @@ public class LevelGrid : MonoBehaviour
 
     public void RemoveUnitFromGrid(GridPosition gridPosition, Unit unit)
     {
-        GridSquare gridSquare = gridSystem.GetGridSquare(gridPosition);
+        GridSquare gridSquare = Instance.gridSystem.GetGridSquare(gridPosition);
         gridSquare.RemoveUnit(unit);
     }
 
     //Passthroughs for encapsulation
     public GridPosition WorldPositionToGridPosition(Vector3 worldPosition) => gridSystem.GetGridPosition(worldPosition);
+
+    public Vector3 GridPositionToWorldPosition(GridPosition gridPosition) => gridSystem.GetWorldPosition(gridPosition);
+
+    public bool IsValidGridPosition(GridPosition gridPosition) => gridSystem.IsValidGridPosition(gridPosition);
+
+    public int GetWidth() => gridSystem.GetWidth();
+
+    public int GetHeight() => gridSystem.GetHeight();
+
+    public bool HasAnyUnitOnGridPosition(GridPosition gridPosition)
+    {
+        GridSquare gridSquare = gridSystem.GetGridSquare(gridPosition);
+        if (gridSquare != null)
+        {
+            return gridSquare.HasAnyUnit();
+        }
+        return false;
+    }
 }
