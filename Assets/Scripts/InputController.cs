@@ -59,7 +59,7 @@ public class InputController : MonoBehaviour
 
     private void HandleUnitSpin()
     {
-        unitActionSystem.HandleUnitSpinToggle();
+        unitActionSystem.HandleUnitSpinOrder();
     }
 }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -36,21 +37,37 @@ public class MoveAction : BaseAction
         float distancToMoveTarget = Vector3.Distance(transform.position, targetMovePosition);
         if (distancToMoveTarget <= stopDistance)
         {
-            setMoving(false);
+            StopMoving();
         }
     }
-    public void HandleMoveOrder(GridPosition gridPosition)
+    public void HandleMoveOrder(GridPosition gridPosition, Action callback)
     {
-        if (IsValidActionGridPosition(gridPosition))
+        if (!IsValidActionGridPosition(gridPosition))
         {
-            setMoving(true);
-            targetMovePosition = LevelGrid.Instance.GridPositionToWorldPosition(gridPosition);
+            callback.Invoke();
+            return;
         }
+        StartMoving();
+        OnActionCompleted = callback;
+        targetMovePosition = LevelGrid.Instance.GridPositionToWorldPosition(gridPosition);
     }
     private void setMoving(bool bMove)
     {
         IsActive = bMove;
         unitAnimator.SetBool("IsWalking", bMove);
+    }
+
+    private void StartMoving()
+    {
+        setMoving(true);
+    }
+
+    private void StopMoving()
+    {
+        setMoving(false);
+        OnActionCompleted?.Invoke();
+        OnActionCompleted = null;
+
     }
 
     public bool IsValidActionGridPosition(GridPosition gridPosition)

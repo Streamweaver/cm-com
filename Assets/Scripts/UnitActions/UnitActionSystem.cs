@@ -6,11 +6,9 @@ using UnityEngine;
 
 public class UnitActionSystem : MonoBehaviour
 {
-    // public event 
-
     public static UnitActionSystem Instance { get; private set; }
-
     public event EventHandler OnSelectedUnitChanged;
+    private bool IsBusy  = false;
     
     [SerializeField] private Unit selectedUnit;
 
@@ -27,8 +25,19 @@ public class UnitActionSystem : MonoBehaviour
 
     }
 
+    private void SetBusy()
+    {
+        IsBusy = true;
+    }
+
+    private void ClearBusy() 
+    { 
+        IsBusy = false; 
+    }
+
     public void HandleUnitSelection(Unit unit)
     {
+        if (IsBusy) return;
         if (Instance.selectedUnit == null || unit.gameObject != Instance.selectedUnit.gameObject)
         {
             Instance.selectedUnit = unit.GetComponent<Unit>();
@@ -41,16 +50,20 @@ public class UnitActionSystem : MonoBehaviour
 
     public void HandleUnitMoveOrder(GridPosition gridPosition)
     {
+        if (IsBusy) return;
         if (Instance.selectedUnit != null)
         {
-            Instance.selectedUnit.GetMoveAction().HandleMoveOrder(gridPosition);
+            SetBusy();
+            Instance.selectedUnit.GetMoveAction().HandleMoveOrder(gridPosition, ClearBusy);
         }
     }
 
-    public void HandleUnitSpinToggle()
+    public void HandleUnitSpinOrder()
     {
+        if (IsBusy) return;
         if (Instance.selectedUnit != null) {
-            Instance.selectedUnit.GetSpinAction().ToggleSpin();
+            SetBusy();
+            Instance.selectedUnit.GetSpinAction().HandleOrder(ClearBusy);
         }
     }
 
