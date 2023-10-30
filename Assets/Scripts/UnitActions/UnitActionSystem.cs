@@ -32,7 +32,8 @@ public class UnitActionSystem : MonoBehaviour
 
     private void ClearBusy() 
     { 
-        IsBusy = false; 
+        IsBusy = false;
+        ShowValidGridPositions();
     }
 
     public void HandleUnitSelection(Unit unit)
@@ -42,8 +43,16 @@ public class UnitActionSystem : MonoBehaviour
         {
             Instance.selectedUnit = unit.GetComponent<Unit>();
             Instance.OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);
+            ShowValidGridPositions();
+        }
+    }
+
+    private void ShowValidGridPositions()
+    {
+        if (selectedUnit != null)
+        {
             GridSystemVisual.Instance.HideAllGridPositions();
-            List<GridPosition> validGridPositions = unit.GetMoveAction().GetValidActionGridPositionList();
+            List<GridPosition> validGridPositions = selectedUnit.GetMoveAction().GetValidActionGridPositionList();
             GridSystemVisual.Instance.ShowGridPositions(validGridPositions);
         }
     }
@@ -54,6 +63,7 @@ public class UnitActionSystem : MonoBehaviour
         if (Instance.selectedUnit != null)
         {
             SetBusy();
+            GridSystemVisual.Instance.HideAllGridPositions();
             Instance.selectedUnit.GetMoveAction().HandleMoveOrder(gridPosition, ClearBusy);
         }
     }
