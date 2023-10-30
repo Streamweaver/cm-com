@@ -35,6 +35,11 @@ public class InputController : MonoBehaviour
                 }
             }
         }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            HandleUnitSpin();
+        }
     }
 
     private void HandleUnitClick(Collider unitCollider)
@@ -50,6 +55,11 @@ public class InputController : MonoBehaviour
     {
         GridPosition gridPosition = LevelGrid.Instance.WorldPositionToGridPosition(point);
         unitActionSystem.HandleUnitMoveOrder(gridPosition);
+    }
+
+    private void HandleUnitSpin()
+    {
+        unitActionSystem.HandleUnitSpinToggle();
     }
 }
 

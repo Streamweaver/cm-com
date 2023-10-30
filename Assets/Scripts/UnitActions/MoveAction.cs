@@ -3,27 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Unit))]
-public class MoveAction : MonoBehaviour
+public class MoveAction : BaseAction
 {
     private Vector3 targetMovePosition;
     
-    private bool isMoving = false;
     private int maxMoveDistance = 2;
-    private Unit unit;
 
     [SerializeField] private Animator unitAnimator;
     [SerializeField] private float moveSpeed = 4f;
     [SerializeField] private float rotateSpeed = 15f;
     [SerializeField] private float stopDistance = 0.1f;
-
-    private void Awake()
-    {
-        unit = GetComponent<Unit>();
-        if (unitAnimator == null)
-        {
-            Debug.LogError("Unit Animator not set in inspector!");
-        }
-    }
 
     // Start is called before the first frame update
     void Start()
@@ -33,7 +22,7 @@ public class MoveAction : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isMoving)
+        if (IsActive)
         {
             Move();
         }
@@ -60,7 +49,7 @@ public class MoveAction : MonoBehaviour
     }
     private void setMoving(bool bMove)
     {
-        isMoving = bMove;
+        IsActive = bMove;
         unitAnimator.SetBool("IsWalking", bMove);
     }
 

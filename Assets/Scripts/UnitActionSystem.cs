@@ -47,6 +47,13 @@ public class UnitActionSystem : MonoBehaviour
         }
     }
 
+    public void HandleUnitSpinToggle()
+    {
+        if (Instance.selectedUnit != null) {
+            Instance.selectedUnit.GetSpinAction().ToggleSpin();
+        }
+    }
+
     public Unit GetSelectedUnit()
     {
         return Instance.selectedUnit;
