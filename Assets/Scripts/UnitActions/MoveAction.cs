@@ -36,7 +36,7 @@ public class MoveAction : BaseAction
             StopMoving();
         }
     }
-    public void HandleMoveOrder(GridPosition gridPosition, Action callback)
+    public override void TakeAction(GridPosition gridPosition, Action callback)
     {
         if (!IsValidActionGridPosition(gridPosition))
         {

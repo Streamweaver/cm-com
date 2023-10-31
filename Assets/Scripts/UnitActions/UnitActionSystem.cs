@@ -9,8 +9,9 @@ public class UnitActionSystem : MonoBehaviour
     public static UnitActionSystem Instance { get; private set; }
     public event EventHandler OnSelectedUnitChanged;
     private bool IsBusy  = false;
-    
-    [SerializeField] private Unit selectedUnit;
+
+    private Unit selectedUnit;
+    private BaseAction selectedAction;
 
     private void Awake()
     {
@@ -42,6 +43,7 @@ public class UnitActionSystem : MonoBehaviour
         if (Instance.selectedUnit == null || unit.gameObject != Instance.selectedUnit.gameObject)
         {
             Instance.selectedUnit = unit.GetComponent<Unit>();
+            SetSelectedAction(unit.GetMoveAction());
             Instance.OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);
             ShowValidGridPositions();
         }
@@ -64,7 +66,7 @@ public class UnitActionSystem : MonoBehaviour
         {
             SetBusy();
             GridSystemVisual.Instance.HideAllGridPositions();
-            Instance.selectedUnit.GetMoveAction().HandleMoveOrder(gridPosition, ClearBusy);
+            Instance.selectedUnit.GetMoveAction().TakeAction(gridPosition, ClearBusy);
         }
     }
 
@@ -73,12 +75,22 @@ public class UnitActionSystem : MonoBehaviour
         if (IsBusy) return;
         if (Instance.selectedUnit != null) {
             SetBusy();
-            Instance.selectedUnit.GetSpinAction().HandleOrder(ClearBusy);
+            Instance.selectedUnit.GetSpinAction().TakeAction(new GridPosition(0,0), ClearBusy);
         }
+    }
+
+    private void HandleSelectedAction(BaseAction action)
+    {
+
     }
 
     public Unit GetSelectedUnit()
     {
         return Instance.selectedUnit;
+    }
+
+    public void SetSelectedAction(BaseAction baseAction)
+    {
+        selectedAction = baseAction;
     }
 }

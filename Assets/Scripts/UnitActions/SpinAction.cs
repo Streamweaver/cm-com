@@ -36,7 +36,7 @@ public class SpinAction : BaseAction
 
     }
 
-    public void HandleOrder(Action callback)
+    public override void TakeAction(GridPosition gridPosition, Action callback)
     {
         IsActive = true;
         OnActionCompleted = callback;

@@ -38,7 +38,7 @@ public class InputController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1))
         {
-            HandleUnitSpin();
+            HandleRightClick();
         }
     }
 
@@ -57,7 +57,7 @@ public class InputController : MonoBehaviour
         unitActionSystem.HandleUnitMoveOrder(gridPosition);
     }
 
-    private void HandleUnitSpin()
+    private void HandleRightClick()
     {
         unitActionSystem.HandleUnitSpinOrder();
     }

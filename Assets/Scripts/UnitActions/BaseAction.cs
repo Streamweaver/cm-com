@@ -19,4 +19,6 @@ public abstract class BaseAction : MonoBehaviour
     }
 
     public abstract string Label();
+
+    public abstract void TakeAction(GridPosition gridPosition, Action onActionComplete);
 }
