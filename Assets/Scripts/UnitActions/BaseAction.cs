@@ -17,4 +17,6 @@ public abstract class BaseAction : MonoBehaviour
             Debug.LogError("Action is unable to get the unit component!");
         }
     }
+
+    public abstract string Label();
 }

@@ -1440,8 +1440,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9381eca760c059548a5b2348e265cf94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionButtonPrefab: {fileID: 0}
-  actionButtonContainer: {fileID: 0}
+  actionButtonPrefab: {fileID: 341921904636870278, guid: bd85bfb146a7398479c52325b7c9acdb,
+    type: 3}
+  actionButtonContainerTransform: {fileID: 223337275}
 --- !u!1001 &3727635693975699847
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -42,4 +42,9 @@ public class SpinAction : BaseAction
         OnActionCompleted = callback;
         startAngle = transform.eulerAngles;
     }
+
+    public override string Label()
+    {
+        return "Spin";
+    }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 using UnityEngine;
 
 [RequireComponent(typeof(Unit))]
@@ -14,11 +15,6 @@ public class MoveAction : BaseAction
     [SerializeField] private float moveSpeed = 4f;
     [SerializeField] private float rotateSpeed = 15f;
     [SerializeField] private float stopDistance = 0.1f;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
 
     // Update is called once per frame
     void Update()
@@ -91,5 +87,10 @@ public class MoveAction : BaseAction
             }
         }
         return validGridPositions;
+    }
+
+    public override string Label()
+    {
+        return "Move";
     }
 }
