@@ -8,6 +8,7 @@ public class UnitActionSystem : MonoBehaviour
 {
     public static UnitActionSystem Instance { get; private set; }
     public event EventHandler OnSelectedUnitChanged;
+    public event EventHandler OnSelectedActionChanged;
     private bool IsBusy  = false;
 
     private Unit selectedUnit;
@@ -57,18 +58,21 @@ public class UnitActionSystem : MonoBehaviour
         GridSystemVisual.Instance.HideAllGridPositions();
         selectedAction = action;
         GridSystemVisual.Instance.ShowGridPositions(Instance.selectedAction.GetValidActionGridPositionList());
+        OnSelectedActionChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void ClearSelectedAction()
     {
         GridSystemVisual.Instance.HideAllGridPositions();
         Instance.selectedAction = null;
+        OnSelectedActionChanged?.Invoke(this, EventArgs.Empty );
     }
 
     public void HandleSelectedAction(GridPosition gridPosition)
     {
         selectedAction.TakeAction(gridPosition, ClearBusy);
         GridSystemVisual.Instance.HideAllGridPositions();
+        OnSelectedActionChanged?.Invoke(this, EventArgs.Empty );
     }
 
     public Unit GetSelectedUnit()

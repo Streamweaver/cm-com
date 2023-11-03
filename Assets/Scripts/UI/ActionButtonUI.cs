@@ -8,6 +8,7 @@ public class ActionButtonUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI textMeshPro;
     [SerializeField] private Button button;
+    [SerializeField] private GameObject selectedGameObject;
 
     private BaseAction action;
 
@@ -16,6 +17,7 @@ public class ActionButtonUI : MonoBehaviour
     private void Awake()
     {
         action = null;
+
     }
 
     // Start is called before the first frame update
@@ -33,24 +35,34 @@ public class ActionButtonUI : MonoBehaviour
         textMeshPro.text = action.Label().ToUpper();
     }
 
+    public BaseAction GetBaseAction()
+    {
+        return action;
+    }
+
     public void OnActionButtonClicked()
     {
-        if( action == null ) {
-            Debug.Log("Action is NULL");
-        }
-
-        Debug.Log("Button Clicked!");
         if (UnitActionSystem.Instance.GetSelectedAction() == action)
         {
-            Debug.Log($"Actions {action} and {UnitActionSystem.Instance.GetSelectedAction()}  are the same, clearing!");
             // If the selected action is the same, clear it
             UnitActionSystem.Instance.ClearSelectedAction();
         }
         else
         {
-            Debug.Log($"Setting action to {action}");
             // Otherwise, set the action
             UnitActionSystem.Instance.SetSelectedAction(action);
+        }
+        UpdateSelectedVisual();
+    }
+
+    public void UpdateSelectedVisual()
+    {
+        if ( GetBaseAction() == UnitActionSystem.Instance.GetSelectedAction() ) {
+            selectedGameObject.SetActive(true);
+        }
+        else
+        {
+            selectedGameObject.SetActive(false);
         }
     }
 }

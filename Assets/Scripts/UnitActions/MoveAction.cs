@@ -38,7 +38,6 @@ public class MoveAction : BaseAction
     }
     public override void TakeAction(GridPosition gridPosition, Action callback)
     {
-        Debug.Log("Move Action Triggered!");
         if (!IsValidActionGridPosition(gridPosition))
         {
             callback.Invoke();
