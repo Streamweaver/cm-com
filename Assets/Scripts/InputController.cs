@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 public class InputController : MonoBehaviour
 {
-
     private UnitActionSystem unitActionSystem;
 
     // Set these in the inspector.
@@ -19,47 +19,58 @@ public class InputController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, float.MaxValue))
+            if (TryRaycast(out hit, GetCurrentLayerMask()))
             {
-                if (((1 << hit.collider.gameObject.layer) & unitLayer) != 0) {
-                    HandleUnitClick(hit.collider);
-                }
-                if (((1 << hit.collider.gameObject.layer) & environmentLayer) != 0)
-                {
-                    HandleEnvironmentalClick(hit.point);
-                }
+                HandleClick(hit);
             }
-        }
-
-        if (Input.GetMouseButtonDown(1))
-        {
-            HandleRightClick();
         }
     }
 
-    private void HandleUnitClick(Collider unitCollider)
+    private bool TryRaycast(out RaycastHit hit, LayerMask layerMask)
     {
-        if(unitCollider != null && unitCollider.TryGetComponent<Unit>(out Unit unit))
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        return Physics.Raycast(ray, out hit, float.MaxValue, layerMask);
+    }
+
+    private void HandleClick(RaycastHit hit)
+    {
+        if (UnitActionSystem.Instance.GetSelectedAction() == null)
+        {
+            HandleUnitClick(hit);
+        }
+        else
+        {
+            HandleAction(hit);
+        }
+    }
+
+    private LayerMask GetCurrentLayerMask()
+    {
+        if (UnitActionSystem.Instance.GetSelectedAction() == null)
+        {
+            return unitLayer;
+        }
+        else
+        {
+            return environmentLayer;
+        }
+    }
+
+    private void HandleAction(RaycastHit hit)
+    {
+        GridPosition gridPosition = LevelGrid.Instance.WorldPositionToGridPosition(hit.point);
+        UnitActionSystem.Instance.HandleSelectedAction(gridPosition);
+    }
+
+    private void HandleUnitClick(RaycastHit hit)
+    {
+        Collider unitCollider = hit.collider;
+        if (unitCollider != null && unitCollider.TryGetComponent<Unit>(out Unit unit))
         {
             unitActionSystem.HandleUnitSelection(unit);
         }
-
-    }
-
-    private void HandleEnvironmentalClick(Vector3 point)
-    {
-        GridPosition gridPosition = LevelGrid.Instance.WorldPositionToGridPosition(point);
-        unitActionSystem.HandleUnitMoveOrder(gridPosition);
-    }
-
-    private void HandleRightClick()
-    {
-        unitActionSystem.HandleUnitSpinOrder();
     }
 }
-

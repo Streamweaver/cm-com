@@ -38,6 +38,7 @@ public class MoveAction : BaseAction
     }
     public override void TakeAction(GridPosition gridPosition, Action callback)
     {
+        Debug.Log("Move Action Triggered!");
         if (!IsValidActionGridPosition(gridPosition))
         {
             callback.Invoke();
@@ -66,12 +67,7 @@ public class MoveAction : BaseAction
 
     }
 
-    public bool IsValidActionGridPosition(GridPosition gridPosition)
-    {
-        return GetValidActionGridPositionList().Contains(gridPosition);
-    }
-
-    public List<GridPosition> GetValidActionGridPositionList()
+    public override List<GridPosition> GetValidActionGridPositionList()
     {
         List<GridPosition> validGridPositions = new List<GridPosition>();
         GridPosition unitGridPosition = unit.GetGridPosition();

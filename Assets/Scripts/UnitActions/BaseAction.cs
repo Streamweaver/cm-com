@@ -21,4 +21,16 @@ public abstract class BaseAction : MonoBehaviour
     public abstract string Label();
 
     public abstract void TakeAction(GridPosition gridPosition, Action onActionComplete);
+
+    public virtual bool IsValidActionGridPosition(GridPosition gridPosition)
+    {
+        return GetValidActionGridPositionList().Contains(gridPosition);
+    }
+
+    public abstract List<GridPosition> GetValidActionGridPositionList();
+
+    public override string ToString()
+    {
+        return Label();
+    }
 }

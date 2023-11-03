@@ -38,6 +38,7 @@ public class SpinAction : BaseAction
 
     public override void TakeAction(GridPosition gridPosition, Action callback)
     {
+        Debug.Log("Spin Action Taken!");
         IsActive = true;
         OnActionCompleted = callback;
         startAngle = transform.eulerAngles;
@@ -46,5 +47,10 @@ public class SpinAction : BaseAction
     public override string Label()
     {
         return "Spin";
+    }
+
+    public override List<GridPosition> GetValidActionGridPositionList()
+    {
+        return new List<GridPosition> { unit.GetGridPosition() };
     }
 }

@@ -34,7 +34,7 @@ public class UnitActionSystem : MonoBehaviour
     private void ClearBusy() 
     { 
         IsBusy = false;
-        ShowValidGridPositions();
+        selectedAction = null;
     }
 
     public void HandleUnitSelection(Unit unit)
@@ -43,54 +43,36 @@ public class UnitActionSystem : MonoBehaviour
         if (Instance.selectedUnit == null || unit.gameObject != Instance.selectedUnit.gameObject)
         {
             Instance.selectedUnit = unit.GetComponent<Unit>();
-            SetSelectedAction(unit.GetMoveAction());
             Instance.OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);
-            ShowValidGridPositions();
         }
     }
 
-    private void ShowValidGridPositions()
+    public BaseAction GetSelectedAction()
     {
-        if (selectedUnit != null)
-        {
-            GridSystemVisual.Instance.HideAllGridPositions();
-            List<GridPosition> validGridPositions = selectedUnit.GetMoveAction().GetValidActionGridPositionList();
-            GridSystemVisual.Instance.ShowGridPositions(validGridPositions);
-        }
+        return selectedAction;
     }
 
-    public void HandleUnitMoveOrder(GridPosition gridPosition)
+    public void SetSelectedAction(BaseAction action)
     {
-        if (IsBusy) return;
-        if (Instance.selectedUnit != null)
-        {
-            SetBusy();
-            GridSystemVisual.Instance.HideAllGridPositions();
-            Instance.selectedUnit.GetMoveAction().TakeAction(gridPosition, ClearBusy);
-        }
+        GridSystemVisual.Instance.HideAllGridPositions();
+        selectedAction = action;
+        GridSystemVisual.Instance.ShowGridPositions(Instance.selectedAction.GetValidActionGridPositionList());
     }
 
-    public void HandleUnitSpinOrder()
+    public void ClearSelectedAction()
     {
-        if (IsBusy) return;
-        if (Instance.selectedUnit != null) {
-            SetBusy();
-            Instance.selectedUnit.GetSpinAction().TakeAction(new GridPosition(0,0), ClearBusy);
-        }
+        GridSystemVisual.Instance.HideAllGridPositions();
+        Instance.selectedAction = null;
     }
 
-    private void HandleSelectedAction(BaseAction action)
+    public void HandleSelectedAction(GridPosition gridPosition)
     {
-
+        selectedAction.TakeAction(gridPosition, ClearBusy);
+        GridSystemVisual.Instance.HideAllGridPositions();
     }
 
     public Unit GetSelectedUnit()
     {
         return Instance.selectedUnit;
-    }
-
-    public void SetSelectedAction(BaseAction baseAction)
-    {
-        selectedAction = baseAction;
     }
 }
