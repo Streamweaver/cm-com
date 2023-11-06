@@ -12,26 +12,19 @@ public class ActionButtonUI : MonoBehaviour
 
     private BaseAction action;
 
-    // private bool IsActiveAction;  // TODO: Use this to set an active visual on the button.
-
     private void Awake()
     {
-        action = null;
+        // Null checks
+        if (!textMeshPro) Debug.LogError("TextMeshProUGUI not set in " + gameObject.name);
+        if (!button) Debug.LogError("Button not set in " + gameObject.name);
+        if (!selectedGameObject) Debug.LogError("SelectedGameObject not set in " + gameObject.name);
 
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        //action = null;
-        // IsActiveAction = false;
         button.onClick.AddListener(OnActionButtonClicked);
     }
 
     public void SetBaseAction(BaseAction baseAction)
     {
         action = baseAction;
-        Debug.Log($"Button action set for {baseAction}");
         textMeshPro.text = action.Label().ToUpper();
     }
 
@@ -57,12 +50,13 @@ public class ActionButtonUI : MonoBehaviour
 
     public void UpdateSelectedVisual()
     {
-        if ( GetBaseAction() == UnitActionSystem.Instance.GetSelectedAction() ) {
-            selectedGameObject.SetActive(true);
-        }
-        else
-        {
-            selectedGameObject.SetActive(false);
-        }
+        bool isSelected = GetBaseAction() == UnitActionSystem.Instance.GetSelectedAction();
+        selectedGameObject.SetActive(isSelected);
+    }
+
+    public void SetButtonInteractable(bool enableInteraction)
+    {
+        Debug.Log($"Setting {action} button to {enableInteraction}");
+        button.interactable = enableInteraction;
     }
 }

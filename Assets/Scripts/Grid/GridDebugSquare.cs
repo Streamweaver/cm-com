@@ -19,4 +19,10 @@ public class GridDebugSquare : MonoBehaviour
         this.gridSquare = gridSquare;
         
     }
+
+    void OnValidate()
+    {
+        //Simple check and complain
+        if (_textMeshPro == null) Debug.LogWarning($"{name} does not have a text mesh pro element assigned");
+    }
 }

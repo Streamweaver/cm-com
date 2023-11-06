@@ -24,4 +24,9 @@ public class GridSquareVisual : MonoBehaviour
     {
         meshRenderer.enabled=false;
     }
+
+    private void OnValidate()
+    {
+        if(meshRenderer == null) { Debug.LogError($"{name} meshRenderer not assigned"); }
+    }
 }

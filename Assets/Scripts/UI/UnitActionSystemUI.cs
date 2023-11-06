@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class UnitActionSystemUI : MonoBehaviour
 {
@@ -10,62 +8,106 @@ public class UnitActionSystemUI : MonoBehaviour
     [SerializeField] private Transform actionButtonContainerTransform;
 
     private List<ActionButtonUI> actionButtonUIList;
+    private Dictionary<Unit, List<ActionButtonUI>> unitActionButtonDictionary;
 
     private void Awake()
     {
         actionButtonUIList = new List<ActionButtonUI>();
+        unitActionButtonDictionary = new Dictionary<Unit, List<ActionButtonUI>>();
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        UnitActionSystem.Instance.OnSelectedUnitChanged += UnitActionSystem_OnSelectedChanged;
+        // Subscribe to events from the UnitActionSystem
+        UnitActionSystem.Instance.OnSelectedUnitChanged += UnitActionSystem_OnSelectedUnitChanged;
         UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
-        CreateUnitActionButtons();
+        UnitActionSystem.Instance.OnIsBusyChanged += UnitActionSystem_OnBusyChanged;
+
+        CreateOrUpdateUnitActionButtons();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDestroy()
     {
-        
+        // Unsubscribe to prevent memory leaks
+        UnitActionSystem.Instance.OnSelectedUnitChanged -= UnitActionSystem_OnSelectedUnitChanged;
+        UnitActionSystem.Instance.OnSelectedActionChanged -= UnitActionSystem_OnSelectedActionChanged;
+        UnitActionSystem.Instance.OnIsBusyChanged -= UnitActionSystem_OnBusyChanged;
     }
 
-    private void CreateUnitActionButtons()
+    private void CreateOrUpdateUnitActionButtons()
     {
-        foreach (Transform t in actionButtonContainerTransform)
+        Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
+        if (!selectedUnit)
         {
-            Destroy(t.gameObject);  // TODO refactor this to be more object like if course doesn't.
+            Debug.Log("No unit selected");
+            return;
         }
-        Unit unit = UnitActionSystem.Instance.GetSelectedUnit();
-        if (unit != null)
+
+        // Clear the action button list for the current unit
+        foreach (ActionButtonUI actionButtonUI in actionButtonUIList)
         {
-            actionButtonUIList.Clear();
-            foreach (BaseAction baseAction in unit.GetBaseActions())
-            {
-                Transform actionButtonTransfornm = Instantiate(actionButtonPrefab, actionButtonContainerTransform);
-                ActionButtonUI actionButtonUI = actionButtonTransfornm.GetComponent<ActionButtonUI>();
-                actionButtonUI.SetBaseAction(baseAction);
-                actionButtonUIList.Add(actionButtonUI);
-            }
-            UpdateSelectedActionVisual();
+            actionButtonUI.gameObject.SetActive(false);
         }
+        actionButtonUIList.Clear();
+
+        if (!unitActionButtonDictionary.ContainsKey(selectedUnit))
+        {
+            unitActionButtonDictionary.Add(selectedUnit, CreateUnitActionButtons(selectedUnit));
+        }
+
+        // Debugging should be conditional or use a verbose level
+        Debug.Log($"---Updating unit action buttons for {selectedUnit.name}---");
+
+        var unitActionButtons = unitActionButtonDictionary[selectedUnit];
+        foreach (ActionButtonUI actionButtonUI in unitActionButtons)
+        {
+            actionButtonUI.gameObject.SetActive(true);
+            actionButtonUIList.Add(actionButtonUI);
+        }
+
+        UpdateSelectedActionVisual();
     }
 
-    private void UnitActionSystem_OnSelectedChanged(object sender, EventArgs empty)
+    private List<ActionButtonUI> CreateUnitActionButtons(Unit unit)
     {
-        CreateUnitActionButtons();
+        Debug.Log($"Creating unit action buttons for {unit.name}");
+        List<ActionButtonUI> localActionButtonList = new List<ActionButtonUI>();
+
+        foreach (BaseAction baseAction in unit.GetBaseActions())
+        {
+            Transform actionButtonTransform = Instantiate(actionButtonPrefab, actionButtonContainerTransform);
+            ActionButtonUI actionButtonUI = actionButtonTransform.GetComponent<ActionButtonUI>();
+            actionButtonUI.SetBaseAction(baseAction);
+            localActionButtonList.Add(actionButtonUI);
+        }
+
+        return localActionButtonList;
     }
 
-    private void UnitActionSystem_OnSelectedActionChanged(object sender, EventArgs empty)
+    private void UnitActionSystem_OnSelectedUnitChanged(object sender, EventArgs e)
     {
-        CreateUnitActionButtons();
+        CreateOrUpdateUnitActionButtons();
+    }
+
+    private void UnitActionSystem_OnSelectedActionChanged(object sender, EventArgs e)
+    {
+        CreateOrUpdateUnitActionButtons();
+    }
+
+    private void UnitActionSystem_OnBusyChanged(object sender, EventArgs e)
+    {
+        bool isSystemBusy = UnitActionSystem.Instance.GetIsBusy();
+        foreach (ActionButtonUI actionButtonUI in actionButtonUIList)
+        {
+            actionButtonUI.SetButtonInteractable(!isSystemBusy);
+        }
     }
 
     private void UpdateSelectedActionVisual()
     {
         foreach (ActionButtonUI actionButtonUI in actionButtonUIList)
         {
-            actionButtonUI.UpdateSelectedVisual();  
+            actionButtonUI.UpdateSelectedVisual();
         }
     }
 }

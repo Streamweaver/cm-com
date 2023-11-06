@@ -9,6 +9,7 @@ public class UnitActionSystem : MonoBehaviour
     public static UnitActionSystem Instance { get; private set; }
     public event EventHandler OnSelectedUnitChanged;
     public event EventHandler OnSelectedActionChanged;
+    public event EventHandler OnIsBusyChanged;
     private bool IsBusy  = false;
 
     private Unit selectedUnit;
@@ -29,13 +30,24 @@ public class UnitActionSystem : MonoBehaviour
 
     private void SetBusy()
     {
-        IsBusy = true;
+        _setBusy(true);
     }
 
     private void ClearBusy() 
-    { 
-        IsBusy = false;
-        selectedAction = null;
+    {
+        _setBusy(false);
+    }
+
+    private void _setBusy(bool busy)
+    {
+        IsBusy = busy;
+        if(!IsBusy) ClearSelectedAction();
+        OnIsBusyChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public bool GetIsBusy()
+    {
+        return IsBusy;
     }
 
     public void HandleUnitSelection(Unit unit)
@@ -70,6 +82,7 @@ public class UnitActionSystem : MonoBehaviour
 
     public void HandleSelectedAction(GridPosition gridPosition)
     {
+        SetBusy();
         selectedAction.TakeAction(gridPosition, ClearBusy);
         GridSystemVisual.Instance.HideAllGridPositions();
         OnSelectedActionChanged?.Invoke(this, EventArgs.Empty );
