@@ -10,6 +10,11 @@ public class GridSystemVisual : MonoBehaviour
 
     [SerializeField] private Transform gridVisualSystemPrefab;
 
+    private void OnValidate()
+    {
+        if (gridVisualSystemPrefab == null) { Debug.LogError($"{name} gridVisualSystemPrefab not set in inspector!"); }
+    }
+
     private void Awake()
     {
         if (Instance != null)
@@ -34,7 +39,8 @@ public class GridSystemVisual : MonoBehaviour
             {
                 GridPosition gridPosition = new GridPosition(x, z);
                 Transform gridSquareVisualTransform =
-                    Instantiate(gridVisualSystemPrefab, LevelGrid.Instance.GridPositionToWorldPosition(gridPosition), Quaternion.identity);
+                    Instantiate(gridVisualSystemPrefab, LevelGrid.Instance.GridPositionToWorldPosition(gridPosition), 
+                        Quaternion.identity, this.transform);
 
                 if(!gridSquareVisualTransform.TryGetComponent<GridSquareVisual>(out gridSquareVisualArray[x, z]))
                 {

@@ -12,6 +12,13 @@ public class LevelGrid : MonoBehaviour
     [SerializeField] private float gridCellSize = 2f;
 
     private GridSystem gridSystem;
+    private void OnValidate()
+    {
+        if(gridDebugObjectPrefab == null)
+        {
+            Debug.LogError("GridDebugObjectPrefab is not set in the inspector!");
+        }
+    }
 
     private void Awake()
     {
@@ -29,7 +36,7 @@ public class LevelGrid : MonoBehaviour
             return;
         }
         Instance.gridSystem = new GridSystem(gridWidth, gridHeight, gridCellSize);
-        Instance.gridSystem.CreateDebugObjects(gridDebugObjectPrefab);
+        Instance.gridSystem.CreateDebugObjects(gridDebugObjectPrefab, this.transform);
     }
 
     public void AddUnitToGrid(GridPosition gridPosition, Unit unit)
@@ -37,12 +44,6 @@ public class LevelGrid : MonoBehaviour
         GridSquare gridSquare = Instance.gridSystem.GetGridSquare(gridPosition);
         gridSquare.AddUnit(unit);
     }
-
-    //public List<Unit> GetUnitsAtGridPosition(GridPosition gridPosition) 
-    //{
-    //    GridSquare gridSquare = gridSystem.GetGridSquare(gridPosition);
-    //    return gridSquare.GetUnitList();   
-    //}
 
     public void RemoveUnitFromGrid(GridPosition gridPosition, Unit unit)
     {
