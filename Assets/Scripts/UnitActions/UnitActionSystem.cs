@@ -82,10 +82,17 @@ public class UnitActionSystem : MonoBehaviour
 
     public void HandleSelectedAction(GridPosition gridPosition)
     {
-        SetBusy();
-        selectedAction.TakeAction(gridPosition, ClearBusy);
-        GridSystemVisual.Instance.HideAllGridPositions();
-        OnSelectedActionChanged?.Invoke(this, EventArgs.Empty );
+        if (selectedUnit.CanSpendActionPointsToTakeAction(selectedAction))
+        {
+            SetBusy();
+            selectedUnit.SpendActionPoints(selectedAction.GetActionPointCost());
+            selectedAction.TakeAction(gridPosition, ClearBusy);
+            GridSystemVisual.Instance.HideAllGridPositions();
+            OnSelectedActionChanged?.Invoke(this, EventArgs.Empty);
+        } else
+        {
+            ClearSelectedAction(); // If points aren't enough, make sure you clear the selected ation or it get stuck.
+        }
     }
 
     public Unit GetSelectedUnit()

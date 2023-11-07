@@ -7,6 +7,7 @@ public abstract class BaseAction : MonoBehaviour
 {
     protected Unit unit;
     protected bool IsActive = false;
+    protected int actionPointCost = 1;
 
     public Action OnActionCompleted;
 
@@ -28,6 +29,11 @@ public abstract class BaseAction : MonoBehaviour
     }
 
     public abstract List<GridPosition> GetValidActionGridPositionList();
+
+    public virtual int GetActionPointCost()
+    {
+        return actionPointCost;
+    }
 
     public override string ToString()
     {

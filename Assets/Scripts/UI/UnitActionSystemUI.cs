@@ -39,7 +39,6 @@ public class UnitActionSystemUI : MonoBehaviour
         Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
         if (!selectedUnit)
         {
-            Debug.Log("No unit selected");
             return;
         }
 
@@ -55,10 +54,7 @@ public class UnitActionSystemUI : MonoBehaviour
             unitActionButtonDictionary.Add(selectedUnit, CreateUnitActionButtons(selectedUnit));
         }
 
-        // Debugging should be conditional or use a verbose level
-        Debug.Log($"---Updating unit action buttons for {selectedUnit.name}---");
-
-        var unitActionButtons = unitActionButtonDictionary[selectedUnit];
+        List<ActionButtonUI> unitActionButtons = unitActionButtonDictionary[selectedUnit];
         foreach (ActionButtonUI actionButtonUI in unitActionButtons)
         {
             actionButtonUI.gameObject.SetActive(true);
@@ -70,7 +66,6 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private List<ActionButtonUI> CreateUnitActionButtons(Unit unit)
     {
-        Debug.Log($"Creating unit action buttons for {unit.name}");
         List<ActionButtonUI> localActionButtonList = new List<ActionButtonUI>();
 
         foreach (BaseAction baseAction in unit.GetBaseActions())

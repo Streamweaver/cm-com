@@ -9,12 +9,20 @@ public class Unit : MonoBehaviour
     private MoveAction moveAction;
     private SpinAction spinAction;
     private BaseAction[] baseActionArray;
+    private int actionPoints { get; set; }
+    private int _actionPointMax = 2;
+
+    private void OnDestroy()
+    {
+        LevelGrid.Instance.RemoveUnitFromGrid(unitGridPosition, this);
+    }
 
     private void Awake()
     {
         moveAction = GetComponent<MoveAction>();
         spinAction = GetComponent<SpinAction>();
         baseActionArray = GetComponents<BaseAction>();
+        ResetActionPoints();
     }
 
     private void Start()
@@ -62,5 +70,21 @@ public class Unit : MonoBehaviour
     public BaseAction[] GetBaseActions()
     {
         return baseActionArray;
+    }
+
+    public void ResetActionPoints()
+    {
+        actionPoints = _actionPointMax;
+    }
+
+    public bool CanSpendActionPointsToTakeAction(BaseAction baseAction)
+    {
+        Debug.Log($"Action {baseAction} of {baseAction.GetActionPointCost()} with {actionPoints} left");
+        return baseAction.GetActionPointCost() <= actionPoints;
+    }
+
+    public void SpendActionPoints(int actionPointCost)
+    {
+        actionPoints -= actionPointCost;
     }
 }

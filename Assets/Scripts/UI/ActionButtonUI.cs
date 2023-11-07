@@ -56,7 +56,6 @@ public class ActionButtonUI : MonoBehaviour
 
     public void SetButtonInteractable(bool enableInteraction)
     {
-        Debug.Log($"Setting {action} button to {enableInteraction}");
         button.interactable = enableInteraction;
     }
 }
