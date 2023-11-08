@@ -32,7 +32,7 @@ public class TurnSystemUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        UpdateTurnDisplay();
+        UpdateTurnUI();
         endTurnButton.onClick.AddListener(OnEndTurnClicked);
         TurnSystem.Instance.OnNextTurn += TurnSystem_OnTurnChanged;
     }
@@ -42,20 +42,31 @@ public class TurnSystemUI : MonoBehaviour
         TurnSystem.Instance.NextTurn();
     }
 
+    private void UpdateTurnUI()
+    {
+        UpdateTurnDisplay();
+        UpdateEndTurnButtonDisplay();
+    }
+
+    private void UpdateEndTurnButtonDisplay()
+    {
+        endTurnButton.gameObject.SetActive(TurnSystem.Instance.IsPlayerTurn());
+    }
+
     private void UpdateTurnDisplay() {
         if (TurnSystem.Instance.IsPlayerTurn())
         {
-            turnNumberText.text = "Turn " + TurnSystem.Instance.GetTurnNumber();
-            turnNumberText.color = Color.white;
+            turnNumberText.text = "Player Turn " + TurnSystem.Instance.GetTurnNumber();
+            turnNumberText.color = Color.blue;
         } else
-        {
-            turnNumberText.text = "Enemy Turn";
+        { 
+            turnNumberText.text = "Enemy Turn " + TurnSystem.Instance.GetTurnNumber();
             turnNumberText.color = Color.red;
         }
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
-        UpdateTurnDisplay();
+        UpdateTurnUI();
     }
 }

@@ -27,7 +27,7 @@ public class TurnSystem : MonoBehaviour
 
     public void NextTurn()
     {
-        if (isPlayerTurn)
+        if (!isPlayerTurn) // Only update after enemies turn.
         {
             turnNumber++;
         }

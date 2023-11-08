@@ -17,11 +17,8 @@ public class UnitActionSystemUI : MonoBehaviour
     {
         actionButtonUIList = new List<ActionButtonUI>();
         unitActionButtonDictionary = new Dictionary<Unit, List<ActionButtonUI>>();
-
         ValidateComponents();
 
-        CreateOrUpdateUnitActionButtons();
-        UpdateActionPointsText();
     }
 
     private void ValidateComponents()
@@ -59,34 +56,42 @@ public class UnitActionSystemUI : MonoBehaviour
     private void Start()
     {
         SubscribeToEvents();
-        CreateOrUpdateUnitActionButtons();
-        UpdateActionPointsText();
+        UpdateActionUI(null);
     }
 
-    private void CreateOrUpdateUnitActionButtons()
+    private void UpdateActionUI(Unit selectedUnit)
     {
-
-        Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();        
         if (!selectedUnit)
         {
+            SetDisplay(false);
             return;
         }
+        SetDisplay(true);
+        UpdateActionButtons(selectedUnit);
+        UpdateActionPointsText(selectedUnit);
+        UpdateSelectedActionVisual();
+    }
 
-        DeactivateActionUIButtons();
+    private void UpdateActionButtons(Unit unit)
+    {
+        if (unit == null) return;
 
-        // Check if we already have buttons for this unit, if not, create them
-        List<ActionButtonUI> buttonsForUnit;
-        if (!unitActionButtonDictionary.TryGetValue(selectedUnit, out buttonsForUnit))
+        // Avoid unnecessary dictionary lookups
+        if (!unitActionButtonDictionary.TryGetValue(unit, out var buttonsForUnit))
         {
-            buttonsForUnit = CreateUnitActionButtons(selectedUnit);
-            unitActionButtonDictionary[selectedUnit] = buttonsForUnit;
+            buttonsForUnit = CreateUnitActionButtons(unit);
+            unitActionButtonDictionary[unit] = buttonsForUnit;
         }
 
+        // Activate buttons only for the selected unit
+        DeactivateActionUIButtons();
         SetActionButtonUIButtons(buttonsForUnit);
 
-        UpdateSelectedActionVisual();
-        UpdateActionPointsText();
-        UpdateActionButtons();
+        bool isSystemBusy = UnitActionSystem.Instance.GetIsBusy();
+        foreach (ActionButtonUI actionButtonUI in actionButtonUIList)
+        {
+            actionButtonUI.SetButtonInteractable(!isSystemBusy && unit.CanSpendActionPointsToTakeAction(actionButtonUI.GetBaseAction()));
+        }
     }
 
     private void DeactivateActionUIButtons()
@@ -131,7 +136,7 @@ public class UnitActionSystemUI : MonoBehaviour
             return;
         }
         SetDisplay(true);
-        CreateOrUpdateUnitActionButtons();
+        UpdateActionUI(unit);
     }
 
     private void UnitActionSystem_OnBusyChanged(object sender, EventArgs e)
@@ -166,9 +171,8 @@ public class UnitActionSystemUI : MonoBehaviour
         }
     }
 
-    private void UpdateActionPointsText()
+    private void UpdateActionPointsText(Unit unit)
     {
-        Unit unit = UnitActionSystem.Instance.GetSelectedUnit(); 
         if (!unit)
         {
             actionPointsText.text = "";
@@ -179,14 +183,13 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private void TurnSystem_OnNextTurn(object empty, EventArgs e)
     {
-        UpdateActionPointsText();
         UnitActionSystem.Instance.ClearActionSystem();
-        UpdateActionButtons();
+        UpdateActionUI(UnitActionSystem.Instance.GetSelectedUnit());
     }
 
     private void Unit_OnAnyActionPointChanged(object sender, EventArgs e)
     {
-        UpdateActionPointsText();
+        UpdateActionPointsText(UnitActionSystem.Instance.GetSelectedUnit());
     }
 
     private void SetDisplay(bool display)
