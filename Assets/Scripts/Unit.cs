@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,12 +10,21 @@ public class Unit : MonoBehaviour
     private MoveAction moveAction;
     private SpinAction spinAction;
     private BaseAction[] baseActionArray;
-    private int actionPoints { get; set; }
-    private int _actionPointMax = 2;
+    private int actionPoints;
+    private const int ACTION_POINT_MAX = 3;
+
+    public static event EventHandler OnAnyActionPointChanged;
 
     private void OnDestroy()
     {
-        LevelGrid.Instance.RemoveUnitFromGrid(unitGridPosition, this);
+        if (LevelGrid.Instance != null)
+        {
+            LevelGrid.Instance.RemoveUnitFromGrid(unitGridPosition, this);
+        }
+        if (TurnSystem.Instance != null)
+        {
+            TurnSystem.Instance.OnNextTurn -= TurnSystem_OnEndTurn;
+        }
     }
 
     private void Awake()
@@ -33,6 +43,9 @@ public class Unit : MonoBehaviour
         }
         unitGridPosition = LevelGrid.Instance.WorldPositionToGridPosition(this.transform.position);
         LevelGrid.Instance.AddUnitToGrid(unitGridPosition, this);
+
+        // LISTENERS
+        TurnSystem.Instance.OnNextTurn += TurnSystem_OnEndTurn;
     }
 
     // Update is called once per frame
@@ -72,19 +85,31 @@ public class Unit : MonoBehaviour
         return baseActionArray;
     }
 
-    public void ResetActionPoints()
-    {
-        actionPoints = _actionPointMax;
-    }
-
     public bool CanSpendActionPointsToTakeAction(BaseAction baseAction)
     {
         Debug.Log($"Action {baseAction} of {baseAction.GetActionPointCost()} with {actionPoints} left");
         return baseAction.GetActionPointCost() <= actionPoints;
     }
 
+    private void ResetActionPoints()
+    {
+        actionPoints = ACTION_POINT_MAX;
+        OnAnyActionPointChanged?.Invoke(this, EventArgs.Empty);
+    }
+
     public void SpendActionPoints(int actionPointCost)
     {
         actionPoints -= actionPointCost;
+        OnAnyActionPointChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public int GetActionPoints()
+    {
+        return actionPoints;
+    }
+
+    private void TurnSystem_OnEndTurn(object sender, EventArgs e)
+    {
+        ResetActionPoints();
     }
 }

@@ -36,6 +36,11 @@ public class SpinAction : BaseAction
 
     }
 
+    public override bool CanTakeAction(GridPosition gridPosition)
+    {
+        return true;
+    }
+
     public override void TakeAction(GridPosition gridPosition, Action callback)
     {
         IsActive = true;

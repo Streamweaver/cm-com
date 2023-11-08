@@ -82,7 +82,7 @@ public class UnitActionSystem : MonoBehaviour
 
     public void HandleSelectedAction(GridPosition gridPosition)
     {
-        if (selectedUnit.CanSpendActionPointsToTakeAction(selectedAction))
+        if (selectedUnit.CanSpendActionPointsToTakeAction(selectedAction) && selectedAction.CanTakeAction(gridPosition))
         {
             SetBusy();
             selectedUnit.SpendActionPoints(selectedAction.GetActionPointCost());

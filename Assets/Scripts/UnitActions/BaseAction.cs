@@ -20,6 +20,8 @@ public abstract class BaseAction : MonoBehaviour
     }
 
     public abstract string Label();
+    
+    public abstract bool CanTakeAction(GridPosition gridPosition);
 
     public abstract void TakeAction(GridPosition gridPosition, Action onActionComplete);
 

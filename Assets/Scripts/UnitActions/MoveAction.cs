@@ -8,13 +8,18 @@ using UnityEngine;
 public class MoveAction : BaseAction
 {
     private Vector3 targetMovePosition;
-    
+
     private int maxMoveDistance = 2;
 
     [SerializeField] private Animator unitAnimator;
     [SerializeField] private float moveSpeed = 4f;
     [SerializeField] private float rotateSpeed = 15f;
     [SerializeField] private float stopDistance = 0.1f;
+
+    private void Start()
+    {
+        actionPointCost = 2;
+    }
 
     // Update is called once per frame
     void Update()
@@ -36,16 +41,22 @@ public class MoveAction : BaseAction
             StopMoving();
         }
     }
+
+    public override bool CanTakeAction(GridPosition gridPosition)
+    {
+        return IsValidActionGridPosition(gridPosition);
+    }
+
     public override void TakeAction(GridPosition gridPosition, Action callback)
     {
-        if (!IsValidActionGridPosition(gridPosition))
+        if (!CanTakeAction(gridPosition))
         {
             callback.Invoke();
             return;
         }
-        StartMoving();
         OnActionCompleted = callback;
         targetMovePosition = LevelGrid.Instance.GridPositionToWorldPosition(gridPosition);
+        StartMoving();
     }
     private void setMoving(bool bMove)
     {
