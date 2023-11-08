@@ -10,7 +10,7 @@ public class UnitActionSystem : MonoBehaviour
     public event EventHandler OnSelectedUnitChanged;
     public event EventHandler OnSelectedActionChanged;
     public event EventHandler OnIsBusyChanged;
-    private bool IsBusy  = false;
+    private bool IsBusy = false;
 
     private Unit selectedUnit;
     private BaseAction selectedAction;
@@ -20,7 +20,8 @@ public class UnitActionSystem : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-        } else
+        }
+        else
         {
             Debug.LogError("Trying to instantiate an instance of UnitActionSystem when one already exists! " + transform);
             Destroy(gameObject);
@@ -28,12 +29,20 @@ public class UnitActionSystem : MonoBehaviour
 
     }
 
+    public void ClearActionSystem()
+    {
+        ClearSelectedAction();
+        ClearSelectedUnit();
+        ClearBusy();
+    }
+
+    // BUSY FLAG
     private void SetBusy()
     {
         _setBusy(true);
     }
 
-    private void ClearBusy() 
+    private void ClearBusy()
     {
         _setBusy(false);
     }
@@ -41,7 +50,7 @@ public class UnitActionSystem : MonoBehaviour
     private void _setBusy(bool busy)
     {
         IsBusy = busy;
-        if(!IsBusy) ClearSelectedAction();
+        if (!IsBusy) ClearSelectedAction();
         OnIsBusyChanged?.Invoke(this, EventArgs.Empty);
     }
 
@@ -50,6 +59,7 @@ public class UnitActionSystem : MonoBehaviour
         return IsBusy;
     }
 
+    // UNIT OPERATIONS
     public void HandleUnitSelection(Unit unit)
     {
         if (IsBusy)
@@ -77,6 +87,18 @@ public class UnitActionSystem : MonoBehaviour
         OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    private void ClearSelectedUnit()
+    {
+        selectedUnit = null;
+        OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public Unit GetSelectedUnit()
+    {
+        return Instance.selectedUnit;
+    }
+
+    // ACTION OPERATIONS
     public BaseAction GetSelectedAction()
     {
         return selectedAction;
@@ -86,15 +108,15 @@ public class UnitActionSystem : MonoBehaviour
     {
         GridSystemVisual.Instance.HideAllGridPositions();
         selectedAction = action;
-        GridSystemVisual.Instance.ShowGridPositions(Instance.selectedAction.GetValidActionGridPositionList());
+        GridSystemVisual.Instance.ShowGridPositions(selectedAction.GetValidActionGridPositionList());
         OnSelectedActionChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void ClearSelectedAction()
     {
         GridSystemVisual.Instance.HideAllGridPositions();
-        Instance.selectedAction = null;
-        OnSelectedActionChanged?.Invoke(this, EventArgs.Empty );
+        selectedAction = null;
+        OnSelectedActionChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void HandleSelectedAction(GridPosition gridPosition)
@@ -106,14 +128,10 @@ public class UnitActionSystem : MonoBehaviour
             selectedAction.TakeAction(gridPosition, ClearBusy);
             GridSystemVisual.Instance.HideAllGridPositions();
             OnSelectedActionChanged?.Invoke(this, EventArgs.Empty);
-        } else
+        }
+        else
         {
             ClearSelectedAction(); // If points aren't enough, make sure you clear the selected ation or it get stuck.
         }
-    }
-
-    public Unit GetSelectedUnit()
-    {
-        return Instance.selectedUnit;
     }
 }

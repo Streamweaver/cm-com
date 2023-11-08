@@ -11,6 +11,7 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private List<ActionButtonUI> actionButtonUIList;
     private Dictionary<Unit, List<ActionButtonUI>> unitActionButtonDictionary;
+    private bool IsDisplayed = false;
 
     private void Awake()
     {
@@ -64,7 +65,8 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private void CreateOrUpdateUnitActionButtons()
     {
-        Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
+
+        Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();        
         if (!selectedUnit)
         {
             return;
@@ -122,6 +124,13 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private void UnitActionSystem_OnUnitOrActionChanged(object sender, EventArgs e)
     {
+        Unit unit = UnitActionSystem.Instance.GetSelectedUnit();
+        if (!unit)
+        {
+            SetDisplay(false);
+            return;
+        }
+        SetDisplay(true);
         CreateOrUpdateUnitActionButtons();
     }
 
@@ -132,6 +141,7 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private void UpdateActionButtons()
     {
+        if (!UnitActionSystem.Instance.GetSelectedUnit()) return;
         bool isSystemBusy = UnitActionSystem.Instance.GetIsBusy();
         foreach (ActionButtonUI actionButtonUI in actionButtonUIList)
         {
@@ -170,12 +180,20 @@ public class UnitActionSystemUI : MonoBehaviour
     private void TurnSystem_OnNextTurn(object empty, EventArgs e)
     {
         UpdateActionPointsText();
-        UnitActionSystem.Instance.ClearSelectedAction();
+        UnitActionSystem.Instance.ClearActionSystem();
         UpdateActionButtons();
     }
 
     private void Unit_OnAnyActionPointChanged(object sender, EventArgs e)
     {
         UpdateActionPointsText();
+    }
+
+    private void SetDisplay(bool display)
+    {
+        if(display == IsDisplayed) return;
+        IsDisplayed = display;
+        actionButtonContainerTransform.gameObject.SetActive(display);
+        actionPointsText.gameObject.SetActive(display);
     }
 }

@@ -90,7 +90,6 @@ public class Unit : MonoBehaviour
 
     public bool CanSpendActionPointsToTakeAction(BaseAction baseAction)
     {
-        Debug.Log($"Action {baseAction} of {baseAction.GetActionPointCost()} with {actionPoints} left");
         return baseAction.GetActionPointCost() <= actionPoints;
     }
 

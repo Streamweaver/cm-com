@@ -24,10 +24,15 @@ public class UnitSelectedVisual : MonoBehaviour
         }
     }
 
-    void Start()
+    private void OnEnable()
     {
         UnitActionSystem.Instance.OnSelectedUnitChanged += UnitActionSystem_OnSelectUnitChange;
         UpdateVisual();
+    }
+
+    void OnDestory()
+    {
+        UnitActionSystem.Instance.OnSelectedUnitChanged -= UnitActionSystem_OnSelectUnitChange;
     }
 
     // Update is called once per frame
