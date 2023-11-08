@@ -13,6 +13,9 @@ public class Unit : MonoBehaviour
     private int actionPoints;
     private const int ACTION_POINT_MAX = 3;
 
+    [SerializeField]
+    private bool isEnemy = false;
+
     public static event EventHandler OnAnyActionPointChanged;
 
     private void OnDestroy()
@@ -110,6 +113,14 @@ public class Unit : MonoBehaviour
 
     private void TurnSystem_OnEndTurn(object sender, EventArgs e)
     {
-        ResetActionPoints();
+        if ((IsEnemy() && !TurnSystem.Instance.IsPlayerTurn()) || (!IsEnemy() && TurnSystem.Instance.IsPlayerTurn()))
+        {
+            ResetActionPoints();
+        }
+    }
+
+    public bool IsEnemy()
+    {
+        return isEnemy;
     }
 }

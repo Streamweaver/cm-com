@@ -19,6 +19,11 @@ public class InputController : MonoBehaviour
 
     private void Update()
     {
+        if (UnitActionSystem.Instance.GetIsBusy() || !TurnSystem.Instance.IsPlayerTurn())
+        {
+            return;
+        }
+
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             RaycastHit hit;

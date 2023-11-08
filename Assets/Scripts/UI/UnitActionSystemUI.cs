@@ -170,8 +170,8 @@ public class UnitActionSystemUI : MonoBehaviour
     private void TurnSystem_OnNextTurn(object empty, EventArgs e)
     {
         UpdateActionPointsText();
-        UpdateActionButtons();
         UnitActionSystem.Instance.ClearSelectedAction();
+        UpdateActionButtons();
     }
 
     private void Unit_OnAnyActionPointChanged(object sender, EventArgs e)

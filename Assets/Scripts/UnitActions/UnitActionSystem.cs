@@ -52,12 +52,29 @@ public class UnitActionSystem : MonoBehaviour
 
     public void HandleUnitSelection(Unit unit)
     {
-        if (IsBusy) return;
-        if (Instance.selectedUnit == null || unit.gameObject != Instance.selectedUnit.gameObject)
+        if (IsBusy)
         {
-            Instance.selectedUnit = unit.GetComponent<Unit>();
-            Instance.OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);
+            // Early return if the system is busy
+            return;
         }
+
+        // Check if the selected unit should be changed
+        if (IsUnitSelectable(unit))
+        {
+            ChangeSelectedUnit(unit);
+        }
+    }
+
+    private bool IsUnitSelectable(Unit unit)
+    {
+        // Determine if no unit is selected, the unit is the same, or the unit is an enemy
+        return selectedUnit != unit && !unit.IsEnemy();
+    }
+
+    private void ChangeSelectedUnit(Unit unit)
+    {
+        selectedUnit = unit;
+        OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public BaseAction GetSelectedAction()

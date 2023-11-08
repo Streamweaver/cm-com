@@ -43,7 +43,15 @@ public class TurnSystemUI : MonoBehaviour
     }
 
     private void UpdateTurnDisplay() {
-        turnNumberText.text = "Turn " + TurnSystem.Instance.GetTurnNumber();
+        if (TurnSystem.Instance.IsPlayerTurn())
+        {
+            turnNumberText.text = "Turn " + TurnSystem.Instance.GetTurnNumber();
+            turnNumberText.color = Color.white;
+        } else
+        {
+            turnNumberText.text = "Enemy Turn";
+            turnNumberText.color = Color.red;
+        }
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
