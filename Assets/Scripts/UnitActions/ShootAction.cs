@@ -34,6 +34,7 @@ public class ShootAction : BaseAction
             case State.Shooting:
                 if (stepTimer <= 0f)
                 {
+                    Shoot(targetUnit);
                     state = State.Reloading;
                     ResetStepTimer();
                 }
@@ -41,9 +42,8 @@ public class ShootAction : BaseAction
             case State.Reloading:
                 if (stepTimer <= 0f)
                 {
-                    IsActive = false;
+                    ActionComplete();
                     state = State.Idle;
-                    OnActionCompleted?.Invoke();
                 }
                 break;
         }
@@ -116,12 +116,22 @@ public class ShootAction : BaseAction
         return "Shoot";
     }
 
-    public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
+    public override void TakeAction(GridPosition gridPosition, Action callback)
     {
-        IsActive = true;
         targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(gridPosition);
+        if (!targetUnit || !targetUnit.IsEnemy())
+        {
+            Debug.LogError("ShootAction: Invalid target unit");
+            return;
+        }
+        ActionStart(callback);
 
         state = State.Aiming;
         ResetStepTimer();
+    }
+
+    private void Shoot(Unit unit)
+    {
+        unit.ApplyDamage(50);
     }
 }

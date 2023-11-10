@@ -26,9 +26,7 @@ public class SpinAction : BaseAction
         transform.eulerAngles += new Vector3 (0, spinAmount, 0);
         if(totalSpinAmount >= 360)
         {
-            IsActive = false;
-            OnActionCompleted?.Invoke();
-            OnActionCompleted = null;
+            ActionComplete();
 
             totalSpinAmount = 0f;
             transform.eulerAngles = startAngle; // corrects for small drift from angle update.
@@ -43,8 +41,7 @@ public class SpinAction : BaseAction
 
     public override void TakeAction(GridPosition gridPosition, Action callback)
     {
-        IsActive = true;
-        OnActionCompleted = callback;
+        ActionStart(callback);
         startAngle = transform.eulerAngles;
     }
 

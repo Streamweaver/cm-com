@@ -39,6 +39,7 @@ public class MoveAction : BaseAction
         if (distancToMoveTarget <= stopDistance)
         {
             StopMoving();
+            ActionComplete();
         }
     }
 
@@ -54,13 +55,12 @@ public class MoveAction : BaseAction
             callback.Invoke();
             return;
         }
-        OnActionCompleted = callback;
+        ActionStart(callback);
         targetMovePosition = LevelGrid.Instance.GridPositionToWorldPosition(gridPosition);
         StartMoving();
     }
     private void setMoving(bool bMove)
     {
-        IsActive = bMove;
         unitAnimator.SetBool("IsWalking", bMove);
     }
 
@@ -72,9 +72,6 @@ public class MoveAction : BaseAction
     private void StopMoving()
     {
         setMoving(false);
-        OnActionCompleted?.Invoke();
-        OnActionCompleted = null;
-
     }
 
     public override List<GridPosition> GetValidActionGridPositionList()

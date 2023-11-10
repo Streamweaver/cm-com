@@ -18,6 +18,8 @@ public class Unit : MonoBehaviour
 
     public static event EventHandler OnAnyActionPointChanged;
 
+    private int Health = 100;
+
     private void OnDestroy()
     {
         if (LevelGrid.Instance != null)
@@ -126,5 +128,16 @@ public class Unit : MonoBehaviour
     public bool IsEnemyOf(Unit otherUnit)
     {
         return IsEnemy() != otherUnit.IsEnemy();
+    }
+
+    public bool ApplyDamage(int damageAmount)
+    {
+        Health -= damageAmount;
+        if (Health <= 0)
+        {
+            Destroy(this.gameObject);
+            return true;
+        }
+        return false;
     }
 }

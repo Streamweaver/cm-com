@@ -19,6 +19,19 @@ public abstract class BaseAction : MonoBehaviour
         }
     }
 
+    protected void ActionStart(Action callback)
+    {
+        IsActive = true;
+        OnActionCompleted = callback;
+    }
+
+    protected void ActionComplete()
+    {
+        IsActive = false;
+        OnActionCompleted?.Invoke();
+        OnActionCompleted = null;
+    }
+
     public abstract string Label();
     
     public abstract bool CanTakeAction(GridPosition gridPosition);
