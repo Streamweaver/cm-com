@@ -71,4 +71,10 @@ public class LevelGrid : MonoBehaviour
         }
         return false;
     }
+
+    public Unit GetUnitAtGridPosition(GridPosition gridPosition)
+    {
+        GridSquare gridSquare = gridSystem.GetGridSquare(gridPosition);
+        return gridSquare.GetUnit();
+    }
 }

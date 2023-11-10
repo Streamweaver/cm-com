@@ -122,4 +122,9 @@ public class Unit : MonoBehaviour
     {
         return isEnemy;
     }
+
+    public bool IsEnemyOf(Unit otherUnit)
+    {
+        return IsEnemy() != otherUnit.IsEnemy();
+    }
 }
